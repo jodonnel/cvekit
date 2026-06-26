@@ -1,0 +1,68 @@
+name: Daily CVE Sync
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # 06:00 UTC every day
+  workflow_dispatch:       # allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install cvekit
+        run: pip install -e .
+
+      - name: Run sync
+        run: cvekit sync
+
+      - name: Export JSON feeds
+        run: |
+          python3 - <<'EOF'
+          import sqlite3, json
+          from pathlib import Path
+
+          db = Path.home() / ".local/share/cvekit/cvekit.db"
+          if not db.exists():
+              print("DB not found, skipping export")
+              exit(0)
+
+          conn = sqlite3.connect(db)
+          conn.row_factory = sqlite3.Row
+
+          cves = [dict(r) for r in conn.execute(
+              "SELECT * FROM cves ORDER BY cvss_score DESC"
+          ).fetchall()]
+          kpatch = [dict(r) for r in conn.execute("SELECT * FROM kpatch_coverage").fetchall()]
+          leapp = [dict(r) for r in conn.execute("SELECT * FROM leapp_inhibitor").fetchall()]
+          sap = [dict(r) for r in conn.execute("SELECT * FROM sap_note_xref").fetchall()]
+          log = [dict(r) for r in conn.execute(
+              "SELECT * FROM sync_log ORDER BY run_at DESC LIMIT 20"
+          ).fetchall()]
+
+          out = Path("data/feeds")
+          out.mkdir(exist_ok=True)
+          (out / "cves.json").write_text(json.dumps(cves, indent=2))
+          (out / "kpatch.json").write_text(json.dumps(kpatch, indent=2))
+          (out / "leapp.json").write_text(json.dumps(leapp, indent=2))
+          (out / "sap.json").write_text(json.dumps(sap, indent=2))
+          (out / "sync_log.json").write_text(json.dumps(log, indent=2))
+          print(f"Exported {len(cves)} CVEs, {len(kpatch)} kpatch records")
+          EOF
+
+      - name: Commit updated feeds
+        run: |
+          git config user.name  "cvekit-bot"
+          git config user.email "jimdemoslinux@gmail.com"
+          git add data/feeds/ || true
+          git diff --cached --quiet || git commit -m "chore: daily CVE feed sync $(date -u +%Y-%m-%d)"
+          git push || true

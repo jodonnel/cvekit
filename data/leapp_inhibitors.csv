@@ -1,0 +1,8 @@
+package_name,from_ver,to_ver,reason,fix
+AvamarClient,8,9,SHA-1 signed RPM — LEAPP rejects unsigned/SHA-1 packages on RHEL 9,Remove or replace with current Dell EMC Avamar agent for RHEL 9
+NessusAgent,8,9,SHA-1 signed RPM — Nessus agent package signed with deprecated SHA-1,Upgrade Nessus Agent to 10.x which ships SHA-256 signed RPMs
+symantec-netbackup-client,8,9,SHA-1 signed RPM,Contact Veritas for RHEL 9 compatible package
+crowdstrike-falcon-sensor,8,9,Kernel module — must be replaced before upgrade,Ensure Falcon sensor 7.x or later is installed; old versions block LEAPP
+splunk,8,9,SHA-1 signed RPM in some older Splunk UF packages,Upgrade to Splunk UF 9.x
+AvamarClient,7,8,SHA-1 signed RPM,Remove or replace with RHEL 8 compatible Avamar agent
+NessusAgent,7,8,SHA-1 signed RPM,Upgrade Nessus Agent to 10.x

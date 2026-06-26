@@ -1,0 +1,6 @@
+cve_id,sap_note,component,title,url
+CVE-2024-1086,2382421,Kernel,SAP Support for Live Kernel Patching (kpatch) on RHEL,https://launchpad.support.sap.com/#/notes/2382421
+CVE-2024-0646,2382421,Kernel,SAP Support for Live Kernel Patching (kpatch) on RHEL,https://launchpad.support.sap.com/#/notes/2382421
+CVE-2023-6931,2382421,Kernel,SAP Support for Live Kernel Patching (kpatch) on RHEL,https://launchpad.support.sap.com/#/notes/2382421
+CVE-2023-6817,2382421,Kernel,SAP Support for Live Kernel Patching (kpatch) on RHEL,https://launchpad.support.sap.com/#/notes/2382421
+CVE-2024-26581,2382421,Kernel,SAP Support for Live Kernel Patching (kpatch) on RHEL,https://launchpad.support.sap.com/#/notes/2382421
