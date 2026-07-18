@@ -20,7 +20,9 @@ jobs:
           cache: pip
 
       - name: Install cvekit
-        run: pip install -e .
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install .
 
       - name: Run sync
         run: cvekit sync
